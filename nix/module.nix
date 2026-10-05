@@ -27,7 +27,11 @@ in {
       after = [ "network.target" "tor.service" ];
 
       serviceConfig = {
-        Environment = "BOBERT_TOKEN=${toString cfg.token}";
+        Environment = {
+          BOBERT_TOKEN =  toString cfg.token;
+          BOBERT_USERS  = lib.strings.concatStringsSep "," cfg.users;
+          BOBERT_NICKNAMES = lib.strings.concatStringsSep "," cfg.nicknames;
+        };
         ExecStart = "${cfg.package}/bin/bobert";
         Restart = "on-failure";
         DynamicUser = true;
