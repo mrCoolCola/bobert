@@ -1,6 +1,17 @@
 [package]
 name = "bobert"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2024"
 
 [dependencies]
+teloxide = { version = "0.17", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+log = "0.4"
+pretty_env_logger = "0.5"
+iterate-text = "0.0.1"
+clap = { version = "4.5.58", features = ["derive"] }
+reqwest = { version = "0.12.28", features = ["socks"] }
+dotenvy = "0.15.7"
+serde_json = "1.0.150"
+oncelock = "0.1.0-alpha.0"
+qbit = "0.2.3"

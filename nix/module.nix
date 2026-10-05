@@ -5,7 +5,7 @@ in {
     enable = lib.mkEnableOption "My Rust telegram bot";
     token = lib.mkOption {
       type = lib.types.str;
-      default = "";
+      default = "placeholder";
       description = "Telegram token of the bot";
     };
     users = lib.mkOption {
@@ -27,7 +27,8 @@ in {
       after = [ "network.target" "tor.service" ];
 
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/bobert --port ${toString cfg.port}";
+        Environment = "BOBERT_TOKEN=${toString cfg.token}";
+        ExecStart = "${cfg.package}/bin/bobert";
         Restart = "on-failure";
         DynamicUser = true;
       };
