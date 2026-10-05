@@ -3,7 +3,7 @@ use teloxide::types::KeyboardButton;
 use teloxide::types::ReplyMarkup;
 use std::process::Command;
 use reqwest::Proxy;
-use dotenvy::dotenv;
+// use dotenvy::dotenv;
 use std::env;
 use std::sync::OnceLock;
 
@@ -14,7 +14,7 @@ static NICKNAMES: OnceLock<Vec<String>> = OnceLock::new();
 
 fn set_users() -> &'static Vec<i64> {
     USERS.get_or_init(|| {
-        dotenv().ok();
+        // dotenv().ok();
         let raw = env::var("BOBERT_USERS").expect("BOBERT_USERS not set in environment");
         raw.split(',')
             .map(|s| s.trim().parse().expect("Invalid number in USERS"))
@@ -24,7 +24,7 @@ fn set_users() -> &'static Vec<i64> {
 
 fn set_nicknames() -> &'static Vec<String> {
     NICKNAMES.get_or_init(|| {
-        dotenv().ok();
+        // dotenv().ok();
         let raw = env::var("BOBERT_NICKNAMES").expect("NICKNAMES not set in environment");
         raw.split(',')
             .map(|s| s.trim().to_string())
@@ -347,7 +347,7 @@ async fn inform(bot: &Bot, id: i64, infa: String) {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init(); // init logger
-    dotenv()?; // init .env file
+    // dotenv()?; // init .env file
     let proxy = Proxy::all("socks5://127.0.0.1:9050")?;
     let client = reqwest::Client::builder() // https client
         .proxy(proxy)

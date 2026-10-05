@@ -11,7 +11,7 @@ pretty_env_logger = "0.5"
 iterate-text = "0.0.1"
 clap = { version = "4.5.58", features = ["derive"] }
 reqwest = { version = "0.12.28", features = ["socks"] }
-dotenvy = "0.15.7"
+# dotenvy = "0.15.7"
 serde_json = "1.0.150"
 oncelock = "0.1.0-alpha.0"
 qbit = "0.2.3"

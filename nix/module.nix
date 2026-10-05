@@ -42,7 +42,7 @@ in
         BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
       };
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/bobert";
+        ExecStart = "${cfg.package}/bin/bobert start";
         Restart = "on-failure";
         DynamicUser = true;
       };

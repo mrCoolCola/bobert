@@ -1,10 +1,10 @@
 use qbit::{Api, Credentials};
 use qbit::parameters::{AddTorrentType, AddTorrentBuilder};
-use dotenvy::dotenv;
+// use dotenvy::dotenv;
 use std::env;
 
 pub async fn add_magnet(magnet_url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    dotenv();
+    // dotenv();
     // get all parameters from .env
     let user = env::var("QBIT_USER")?;
     let pass = env::var("QBIT_PASS")?;
