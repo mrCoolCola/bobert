@@ -3,10 +3,8 @@ use teloxide::types::KeyboardButton;
 use teloxide::types::ReplyMarkup;
 use std::process::Command;
 use reqwest::Proxy;
-// use dotenvy::dotenv;
 use std::env;
 use std::sync::OnceLock;
-
 mod torrent;
 
 static USERS: OnceLock<Vec<i64>> = OnceLock::new();
@@ -25,7 +23,7 @@ fn set_users() -> &'static Vec<i64> {
 fn set_nicknames() -> &'static Vec<String> {
     NICKNAMES.get_or_init(|| {
         // dotenv().ok();
-        let raw = env::var("BOBERT_NICKNAMES").expect("NICKNAMES not set in environment");
+        let raw = env::var("BOBERT_NICKNAMES").expect("BOBERT_NICKNAMES not set in environment");
         raw.split(',')
             .map(|s| s.trim().to_string())
             .collect()
@@ -52,7 +50,6 @@ fn get_keyboard() -> ReplyMarkup {
     keyboard.push(vec![KeyboardButton::new("🎛 Сервисы")]);
     keyboard.push(vec![KeyboardButton::new("🔥 Температуры")]);
     keyboard.push(vec![KeyboardButton::new("🌐 Сеть")]);
-    
     ReplyMarkup::keyboard(keyboard)
 }
 
@@ -150,7 +147,7 @@ fn get_server_status() -> String {
     
     // Получаем аптайм
     let uptime = Command::new("uptime")
-        .arg("-p")
+        // .arg("-p")
         .output()
         .map(|output| {
             let output_str = String::from_utf8_lossy(&output.stdout);
@@ -347,19 +344,18 @@ async fn inform(bot: &Bot, id: i64, infa: String) {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init(); // init logger
-    // dotenv()?; // init .env file
     let proxy = Proxy::all("socks5://127.0.0.1:9050")?;
     let client = reqwest::Client::builder() // https client
         .proxy(proxy)
         .build()?;
-    // get token from .env
+    // получение тг токена из переменной окружения
     let token = env::var("BOBERT_TOKEN")
         .expect("BOBERT_TOKEN must be set in .env or shell to run the bot.");
     let bot = teloxide::Bot::with_client(token, client);
     let command = std::env::args().nth(1).expect("no command given");
 
-    println!("Users: {:?}", set_users());
-    println!("Nicknames: {:?}", set_nicknames());
+    println!("Айди: {:?}", set_users());
+    println!("Ники: {:?}", set_nicknames());
 
     if command == "msg".to_string() {
         let text = &std::env::args().nth(2).expect("no text given");
@@ -384,32 +380,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 .await?;
                         }
                         "🔌 Статус питания" => {
-                            let status = get_power_status();
-                            bot.send_message(msg.chat.id, status)
+                            bot.send_message(msg.chat.id, get_power_status())
                                 // .reply_markup(get_keyboard())
                                 .await?;
                         }
                         "🎮 Статус сервера" => {
-                            let status = get_server_status();
-                            bot.send_message(msg.chat.id, status)
+                            bot.send_message(msg.chat.id, get_server_status())
                                 // .reply_markup(get_keyboard())
                                 .await?;
                         }
                         "🎛 Сервисы" => {
-                            let status = get_services_status();
-                            bot.send_message(msg.chat.id, status)
+                            bot.send_message(msg.chat.id, get_services_status())
                                 // .reply_markup(get_keyboard())
                                 .await?;
                         }
                         "🔥 Температуры" => {
-                            let status = get_temperatures();
-                            bot.send_message(msg.chat.id, status)
+                            bot.send_message(msg.chat.id, get_temperatures())
                                 // .reply_markup(get_keyboard())
                                 .await?;
                         }
                         "🌐 Сеть" => {
-                            let status = get_network_status();
-                            bot.send_message(msg.chat.id, status)
+                            bot.send_message(msg.chat.id, get_network_status())
                                 // .reply_markup(get_keyboard())
                                 .await?;
                         }
@@ -441,13 +432,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     }
                                     "/magnet" => {
                                         let magnet = parts[1];
-                                        log::info!("Пользователь {} (Ник: {}) добавил магнитку {}", user_id, &get_nickname(user_id), magnet);
+                                        log::info!("Пользователь {} (Ник: {}) добавил магнитку {}", 
+                                            user_id, 
+                                            &get_nickname(user_id), 
+                                            magnet);
                                         torrent::add_magnet(&magnet).await;
                                     }
                                     _ => {
                                         bot.delete_message(msg.chat.id, msg.id).await?;
                                         inform(&bot, user_id, text.to_string()).await;
-                                    }
+                                    } // всё что не комманда то глобально сообщение
                                 }
                             } else {
                                 bot.delete_message(msg.chat.id, msg.id).await?;

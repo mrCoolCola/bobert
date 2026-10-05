@@ -34,6 +34,7 @@
             pkgs.zlib
             pkgs.zlib.dev
             pkgs.rust-analyzer
+            pkgs.rustfmt
           ];
           env = {
             PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.zlib.dev}/lib/pkgconfig";
@@ -49,10 +50,15 @@
         cfg = config.services.bobert;
       in {
         imports = [ ./nix/module.nix ];
-        # Прокидываем собранный пакет в модуль
-        services.bobert.package = lib.mkDefault (
-          self.packages.${pkgs.stdenv.hostPlatform.system}.bobert
-        );
+        services.bobert.package = lib.mkDefault (pkgs.symlinkJoin {
+          name = "bobert-wrapped";
+          paths = [
+            self.packages.${pkgs.stdenv.hostPlatform.system}.bobert
+            pkgs.coreutils
+            pkgs.procps
+            pkgs.lm_sensors
+          ];
+        });
       };
     };
 }
