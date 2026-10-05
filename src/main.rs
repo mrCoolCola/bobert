@@ -367,7 +367,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         log::debug!("text: {:#?}", text);
         log::debug!("escaped: {:#?}", escaped);
         inform(&bot, 228, text.to_string()).await;
-    } else if command == "start".to_string() {
+    } else {
         log::info!("Запускаем бота...");
         inform(&bot, 228, "Бот запущен".to_string()).await;
         teloxide::repl(bot, |bot: Bot, msg: Message| async move {
