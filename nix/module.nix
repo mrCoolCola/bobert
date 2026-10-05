@@ -3,6 +3,10 @@
 in {
   options.services.bobert = {
     enable = lib.mkEnableOption "My Rust telegram bot";
+    package = lib.mkOption {
+      type = lib.types.package;
+      description = "The bobert package to use.";
+    };
     token = lib.mkOption {
       type = lib.types.str;
       default = "placeholder";
