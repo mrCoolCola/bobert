@@ -1,6 +1,6 @@
 {
     "files.exclude": {
-        "**/.direnv": true
+        "**/.direnv": true,
         "**/.vscode": true
     },
     "explorer.excludeGitIgnore": false
