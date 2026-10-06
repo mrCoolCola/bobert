@@ -67,7 +67,7 @@ in
     systemd.timers."bobert-report" = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnCalendar = "0 15 * * *";
+        OnCalendar = "*-*-* 15:00:00";
         Unit = "bobert-report.service";
       };
     };
