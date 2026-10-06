@@ -38,6 +38,10 @@ fn get_nickname(user_id: i64) -> &'static str {
     if let Some(index) = users.iter().position(|&id| id == user_id) {
         // Получаем вектор ников и берём элемент по индексу
         &set_nicknames()[index]   // &String автоматически становится &str
+    } else if user_id == 228 {
+        "боберт"
+    } else if user_id == 1488 {
+        "ежедневный отчёт"
     } else {
         "n/a"
     }
@@ -321,11 +325,6 @@ fn manage_service(command: &str, service: &str) -> String {
 }
 
 async fn inform(bot: &Bot, id: i64, infa: String) {
-    // let infa = infa
-    //     .lines()
-    //     // .map(|line| format!("║ {}", line))
-    //     .collect::<Vec<_>>()
-    //     .join("\n");
     log::info!("Отправляется текст: {}", infa);
     let message = format!("╔Оповещение от: {}\n{}", &get_nickname(id), infa);
 
@@ -341,6 +340,16 @@ async fn inform(bot: &Bot, id: i64, infa: String) {
     }
 }
 
+// ежедневный репорт состояния хоста
+fn daily_report() -> String {
+    let output = format!(
+        "{}\n{}",
+        get_power_status(),
+        get_server_status()
+    );
+    output
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init(); // init logger
@@ -354,15 +363,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let bot = teloxide::Bot::with_client(token, client);
     let command = std::env::args().nth(1).expect("no command given");
 
-    println!("Айди: {:?}", set_users());
-    println!("Ники: {:?}", set_nicknames());
+    log::debug!("Айди: {:?}", set_users());
+    log::debug!("Ники: {:?}", set_nicknames());
 
     if command == "msg".to_string() {
         let text = &std::env::args().nth(2).expect("no text given");
         let escaped = teloxide::utils::markdown::escape(text);
         log::debug!("text: {:#?}", text);
         log::debug!("escaped: {:#?}", escaped);
-        inform(&bot, 228, text.to_string()).await;
+        inform(&bot, 228, escaped.to_string()).await;
+    } else if command == "report".to_string() {
+        let mesage = teloxide::utils::markdown::escape(&daily_report());
+        inform(&bot, 1488, mesage).await;
     } else {
         log::info!("Запускаем бота...");
         inform(&bot, 228, "Бот запущен".to_string()).await;
@@ -440,8 +452,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     }
                                     _ => {
                                         bot.delete_message(msg.chat.id, msg.id).await?;
-                                        inform(&bot, user_id, text.to_string()).await;
-                                    } // всё что не комманда то глобально сообщение
+                                        let escaped = teloxide::utils::markdown::escape(text);
+                                        inform(&bot, user_id, escaped.to_string()).await;
+                                    } // всё что не комманда то глобальное сообщение
                                 }
                             } else {
                                 bot.delete_message(msg.chat.id, msg.id).await?;

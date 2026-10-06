@@ -5,7 +5,7 @@ use std::env;
 
 pub async fn add_magnet(magnet_url: &str) -> Result<(), Box<dyn std::error::Error>> {
     // dotenv();
-    // get all parameters from .env
+    // get all parameters from the environment
     let user = env::var("QBIT_USER")?;
     let pass = env::var("QBIT_PASS")?;
     let url = env::var("QBIT_URL")?;
