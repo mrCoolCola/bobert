@@ -42,7 +42,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable lib.mkMerge [{
+  config = lib.mkIf cfg.enable (lib.mkMerge [{
       systemd.services.bobert = {
         description = "My Rust telegram bot";
         wantedBy = [ "multi-user.target" ];
@@ -94,5 +94,5 @@ in
         };
       };
     }
-  ];
+  ]);
 }
