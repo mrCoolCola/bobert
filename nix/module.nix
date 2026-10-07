@@ -31,14 +31,19 @@ in
       description = "List of nicknames of users";
     };
     # подмодуль
+    # report = lib.mkOption {
+    #   type = lib.types.submodule {
+    #     options = {
+    #       enable = lib.mkEnableOption "Ежедневный отчёт";
+    #     };
+    #   };
+    #   default = {};
+    #   description = "Настройки ежедневного отчёта";
+    # };
     report = lib.mkOption {
-      type = lib.types.submodule {
-        options = {
-          enable = lib.mkEnableOption "Ежедневный отчёт";
-        };
-      };
-      default = {};
-      description = "Настройки ежедневного отчёта";
+      type = lib.types.bool;
+      default = false;
+      description = "Enable daily bobert-report";
     };
   };
 
@@ -62,7 +67,7 @@ in
         };
       };
     }
-    (lib.mkIf cfg.report.enable) {
+    (lib.mkIf cfg.report) {
       systemd.services.bobert-report = {
         description = "System statistic report";
         wantedBy = [ "multi-user.target" ];
