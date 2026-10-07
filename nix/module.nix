@@ -15,6 +15,11 @@ in
       default = "placeholder";
       description = "Telegram token of the bot";
     };
+    tokenFile = lib.mkOption {
+      type = lib.types.path;
+      default = "";
+      description = "Path to file with Telegram token of the bot";
+    };
     users = lib.mkOption {
       type = lib.types.listOf lib.types.ints.positive;
       default = [ ];
@@ -25,51 +30,65 @@ in
       default = [ ];
       description = "List of nicknames of users";
     };
+    # подмодуль
     report = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Enable daily bobert-report";
+      type = lib.types.submodule {
+        options = {
+          enable = lib.mkEnableOption "Ежедневный отчёт";
+        };
+      };
+      default = {};
+      description = "Настройки ежедневного отчёта";
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    systemd.services.bobert = {
-      description = "My Rust telegram bot";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" "tor.service" ];
-      environment = {
-        BOBERT_TOKEN = cfg.token;
-        BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
-        BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
+  config = lib.mkIf cfg.enable lib.mkMerge [{
+      systemd.services.bobert = {
+        description = "My Rust telegram bot";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network.target" "tor.service" ];
+        environment = {
+          BOBERT_TOKEN = cfg.token;
+          BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
+          BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
+        };
+        serviceConfig = {
+          ExecStart = "${cfg.package}/bin/bobert start";
+          Restart = "on-failure";
+          DynamicUser = true;
+        };
       };
-      serviceConfig = {
-        ExecStart = "${cfg.package}/bin/bobert start";
-        Restart = "on-failure";
-        DynamicUser = true;
+    }
+    (lib.mkIf cfg.report.enable) {
+      systemd.services.bobert-report = {
+        description = "System statistic report";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network.target" "tor.service" ];
+        environment = lib.mkMerge [{
+            BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
+            BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
+          }
+          (lib.mkIf cfg.tokenFile ? cfg.tokenFile) { # check if variable set
+            BOBERT_TOKEN = "$(cat ${cfg.tokenFile})"; # read file and set variable for bobert
+          }
+          (lib.mkIf cfg.tokenFile ? cfg.tokenFile) { # check if variable set
+            BOBERT_TOKEN = cfg.token;
+          }
+        ];
+        serviceConfig = {
+          ExecStart = "${cfg.package}/bin/bobert report";
+          RemainAfterExit = true; # Prevents the service from automatically starting on rebuild.
+          Type = "oneshot";
+          DynamicUser = true;
+        };
       };
-    };
-    systemd.services.bobert-report = {
-      description = "System statistic report";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" "tor.service" ];
-      environment = {
-        BOBERT_TOKEN = cfg.token;
-        BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
-        BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
+      systemd.timers."bobert-report" = {
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "*-*-* 15:00:00";
+          Unit = "bobert-report.service";
+        };
       };
-      serviceConfig = {
-        ExecStart = "${cfg.package}/bin/bobert report";
-        RemainAfterExit = true; # Prevents the service from automatically starting on rebuild.
-        Type = "oneshot";
-        DynamicUser = true;
-      };
-    };
-    systemd.timers."bobert-report" = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = "*-*-* 15:00:00";
-        Unit = "bobert-report.service";
-      };
-    };
-  };
+    }
+  ];
 }
