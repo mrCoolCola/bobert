@@ -57,11 +57,12 @@ in
           BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
         } // lib.optionalAttrs (cfg.tokenFile == "") {
           BOBERT_TOKEN = cfg.token;
-        } // lib.optionalAttrs (cfg.tokenFile != "") {
-          BOBERT_TOKEN = "$(/run/current-system/sw/bin/cat ${cfg.tokenFile})";
         };
         serviceConfig = {
-          ExecStart = "${cfg.package}/bin/bobert start";
+          ExecStart = if cfg.tokenFile != "" then
+            "${pkgs.bash}/bin/bash -c 'BOBERT_TOKEN=$(cat ${cfg.tokenFile}) ${cfg.package}/bin/bobert start'"
+          else
+            "${cfg.package}/bin/bobert start";
           Restart = "on-failure";
           DynamicUser = true;
         };
