@@ -48,12 +48,16 @@ in
         wantedBy = [ "multi-user.target" ];
         after = [ "network.target" "tor.service" ];
         environment = {
-          BOBERT_TOKEN = cfg.token;
           BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
           BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
+        } // lib.optionalAttrs (cfg.tokenFile == "") {
+          BOBERT_TOKEN = cfg.token;
         };
         serviceConfig = {
-          ExecStart = "${cfg.package}/bin/bobert start";
+          ExecStart = if cfg.tokenFile != "" then
+            "${pkgs.bash}/bin/bash -c 'BOBERT_TOKEN=$(cat ${cfg.tokenFile}) ${cfg.package}/bin/bobert start'"
+          else
+            "${cfg.package}/bin/bobert start";
           Restart = "on-failure";
           DynamicUser = true;
         };
@@ -68,15 +72,15 @@ in
             BOBERT_USERS = lib.concatMapStringsSep "," toString cfg.users;
             BOBERT_NICKNAMES = lib.concatMapStringsSep "," toString cfg.nicknames;
           }
-          (lib.mkIf cfg.tokenFile ? cfg.tokenFile) { # check if variable set
-            BOBERT_TOKEN = "$(cat ${cfg.tokenFile})"; # read file and set variable for bobert
-          }
-          (lib.mkIf cfg.tokenFile ? cfg.tokenFile) { # check if variable set
+          (lib.mkIf (cfg.tokenFile == "") { # check if variable set
             BOBERT_TOKEN = cfg.token;
-          }
+          })
         ];
         serviceConfig = {
-          ExecStart = "${cfg.package}/bin/bobert report";
+          ExecStart = if cfg.tokenFile != "" then
+            "${pkgs.bash}/bin/bash -c 'BOBERT_TOKEN=$(cat ${cfg.tokenFile}) ${cfg.package}/bin/bobert report'" # read file and set variable for bobert
+          else
+            "${cfg.package}/bin/bobert report";
           RemainAfterExit = true; # Prevents the service from automatically starting on rebuild.
           Type = "oneshot";
           DynamicUser = true;
