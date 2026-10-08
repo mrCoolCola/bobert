@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.services.bobert;
+  cfg = cfg;
 in
 {
   options.services.bobert = {
@@ -52,7 +52,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable rec (lib.mkMerge [{
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
       systemd.services.bobert = {
         description = "My Rust telegram bot";
         wantedBy = [ "multi-user.target" ];
@@ -73,25 +74,27 @@ in
         };
       };
     }
-  ] // lib.optionalAttrs (cfg.qbittorrentIntegration == true){
+    (lib.mkIf cfg.qbittorrentIntegration){
       services.qbittorrent.serverConfig.AutoRun = {
-          # on torrent added
-          OnTorrentAdded.Enabled = true;
-          OnTorrentAdded.Program = if cfg.tokenFile != "" then
+        # on torrent added
+        OnTorrentAdded = {
+          Enabled = true;
+          Program = if cfg.tokenFile != "" then
             # with tokenfile specified
-            "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${config.services.bobert.package}/bin/bobert qbit_started %N"
+            "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${cfg.package}/bin/bobert qbit_started %N"
           else
             # w/o
-            "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${config.services.bobert.package}/bin/bobert qbit_started %N";
-          # on torrent done
-          enabled = true;
-          program = if cfg.tokenFile != "" then
-            # with tokenfile specified
-            "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${config.services.bobert.package}/bin/bobert qbit_done %N"
-          else
-            # w/o
-            "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${config.services.bobert.package}/bin/bobert qbit_done %N";
+            "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
+        };
+        # on torrent done
+        enabled = true;
+        program = if cfg.tokenFile != "" then
+          # with tokenfile specified
+          "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${cfg.package}/bin/bobert qbit_done %N"
+        else
+          # w/o
+          "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_done %N";
       };
     }
-  );
+  ]);
 }
