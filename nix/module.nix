@@ -51,7 +51,6 @@ in
       description = "Enable messages about download done and started";
     };
   };
-
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       systemd.services.bobert = {
@@ -74,27 +73,27 @@ in
         };
       };
     }
-    (lib.mkIf cfg.qbittorrentIntegration){
-      services.qbittorrent.serverConfig.AutoRun = {
-        # on torrent added
-        OnTorrentAdded = {
-          Enabled = true;
-          Program = if cfg.tokenFile != "" then
-            # with tokenfile specified
-            "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${cfg.package}/bin/bobert qbit_started %N"
+    (lib.mkIf cfg.qbittorrentIntegration (
+      let
+        usersEnv     = "BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users}";
+        nicknamesEnv = "BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}";
+        tokenPrefix  =
+          if cfg.tokenFile != "" then
+            "BOBERT_TOKEN=$(cat ${cfg.tokenFile})"
           else
-            # w/o
-            "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
+            "BOBERT_TOKEN=${cfg.token}";
+        mkCmd = sub: "${tokenPrefix} ${usersEnv} ${nicknamesEnv} ${cfg.package}/bin/bobert ${sub} %N";
+      in
+      {
+        services.qbittorrent.serverConfig.AutoRun = {
+          enabled = true;
+          program = mkCmd "qbit_done";
+          OnTorrentAdded = {
+            enabled = true;
+            program = mkCmd "qbit_started";
+          };
         };
-        # on torrent done
-        enabled = true;
-        program = if cfg.tokenFile != "" then
-          # with tokenfile specified
-          "BOBERT_TOKEN=$(cat ${cfg.tokenFile}) BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}  ${cfg.package}/bin/bobert qbit_done %N"
-        else
-          # w/o
-          "BOBERT_TOKEN=${cfg.token} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_done %N";
-      };
-    }
+      }
+    ))
   ]);
 }
