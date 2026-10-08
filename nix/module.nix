@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = cfg;
+  cfg = config.services.bobert;
 in
 {
   options.services.bobert = {
