@@ -7,7 +7,9 @@
 ```nix
 services.bobert = {
   enable = true;
+  report = true; # ежедневный отчёт о состоянии сервера
   token = "placeholder"; # токен самого бота
+  tokenFile = "/run/secrets/tokenFile"; # файл содержащий токен
   users = [1 2 3]; # массив айдишников разрешённых пользователей
   nicknames = ["наф-наф" "ниф-ниф" "нуф-нуф"] # массив ников, упорядоченных также как и пользователи
 }
@@ -44,3 +46,11 @@ services.bobert = {
   };
 }
 ```
+## Star history
+<a href="https://www.star-history.com/?repos=mrcoolcola%2Fmrcoolcola%2Cmrcoolcola%2Fbobert&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mrcoolcola/mrcoolcola%2Cmrcoolcola/bobert&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mrcoolcola/mrcoolcola%2Cmrcoolcola/bobert&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mrcoolcola/mrcoolcola%2Cmrcoolcola/bobert&type=date&legend=top-left" />
+ </picture>
+</a>

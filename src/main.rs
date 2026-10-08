@@ -375,6 +375,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else if command == "report".to_string() {
         let mesage = teloxide::utils::markdown::escape(&daily_report());
         inform(&bot, 1488, mesage).await;
+    } else if command == "qbit_done".to_string() {
+        let name = &std::env::args().nth(2).expect("no name given");
+        let formatted = format!(
+            "Загрузка торрента завершена.\n```\n{}\n```",
+            name
+        );
+        let escaped = teloxide::utils::markdown::escape(&formatted);
+        inform(&bot, 228, escaped).await;
+    } else if command == "qbit_started".to_string() {
+        let name = &std::env::args().nth(2).expect("no name given");
+        let formatted = format!(
+            "Начата загрузка торрента.\n```\n{}\n```",
+            name
+        );
+        let escaped = teloxide::utils::markdown::escape(&formatted);
+        inform(&bot, 228, escaped).await;
     } else {
         log::info!("Запускаем бота...");
         inform(&bot, 228, "Бот запущен".to_string()).await;
