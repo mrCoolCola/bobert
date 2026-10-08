@@ -73,7 +73,7 @@ in
       };
     };
   }
-  (lib.mkIf cfg.qbittorrentIntegration){
+  (lib.mkIf cfg.qbittorrentIntegration == true){
     services.qbittorrent.serverConfig.AutoRun = {
       # on torrent added
       OnTorrentAdded.Enabled = true;
