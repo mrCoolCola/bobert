@@ -75,21 +75,18 @@ in
     }
     (lib.mkIf cfg.qbittorrentIntegration (
       let
-        usersEnv     = "BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users}";
-        nicknamesEnv = "BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames}";
-        tokenEnv  = if cfg.tokenFile != "" then
+        tokenEnv = if cfg.tokenFile != "" then
           "BOBERT_TOKEN=$(cat ${cfg.tokenFile})"
         else
           "BOBERT_TOKEN=${cfg.token}";
-        # mkCmd = sub: "${tokenPrefix} ${usersEnv} ${nicknamesEnv} ${cfg.package}/bin/bobert ${sub} %N";
       in
       {
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
-          program = "${tokenEnv} ${usersEnv} ${nicknamesEnv} ${cfg.package}/bin/bobert qbit_done %N";
+          program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_done %N";
           OnTorrentAdded = {
             enabled = true;
-            program = "${tokenEnv} ${usersEnv} ${nicknamesEnv} ${cfg.package}/bin/bobert qbit_started %N";
+            program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
           };
         };
       }
