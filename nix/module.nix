@@ -79,15 +79,21 @@ in
           "BOBERT_TOKEN=$(cat ${cfg.tokenFile})"
         else
           "BOBERT_TOKEN=${cfg.token}";
+        done_script = pkgs.writeShellScriptBin "done_scripts" ''
+          ${tokenEnv} \
+          BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
+          BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
+          ${cfg.package}/bin/bobert qbit_done $1
+        '';
       in
       {
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
-          program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_done %N";
-          OnTorrentAdded = {
-            enabled = true;
-            program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
-          };
+          program = "done_script %N";
+          # OnTorrentAdded = {
+          #   enabled = true;
+          #   program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
+          # };
         };
       }
     ))
