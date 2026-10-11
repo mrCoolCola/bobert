@@ -79,7 +79,8 @@ in
         else
           "BOBERT_TOKEN=${cfg.token}";
         # принимает первым аргументов действие qbit_done/qbit_added, 2-ым аргументом принимает сообщение
-        msg_script = pkgs.writeShellScript "done_script" ''
+        msg_script = pkgs.writeShellScript "msg_script" ''
+          #!/usr/bin/env sh
           ${tokenEnv} \
           BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
           BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
@@ -90,8 +91,9 @@ in
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
           program = "${msg_script} qbit_done '%N'";
-          OnTorrentAdded.enabled = true;
-          OnTorrentAdded.program = "${msg_script} qbit_added '%N'";
+          # case sensitive parameter names
+          OnTorrentAdded.Enabled = true;
+          OnTorrentAdded.Program = "${msg_script} qbit_added '%N'";
         };
       }
     ))
