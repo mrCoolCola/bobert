@@ -11,12 +11,12 @@ in
       description = "The bobert package to use.";
     };
     token = lib.mkOption {
-      type = lib.types.str;
-      default = "placeholder";
+      type = lib.types.nullOr lib.types.str;
+      default = "";
       description = "Telegram token of the bot";
     };
     tokenFile = lib.mkOption {
-      type = lib.types.path;
+      type = lib.types.nullOr lib.types.path;
       default = "";
       description = "Path to file with Telegram token of the bot";
     };
