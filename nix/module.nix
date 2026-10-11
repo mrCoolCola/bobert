@@ -90,10 +90,8 @@ in
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
           program = "${msg_script} qbit_done '%N'";
-          OnTorrentAdded = {
-            enabled = true;
-            program = "${msg_script} qbit_added '%N'";
-          };
+          OnTorrentAdded.enabled = true;
+          OnTorrentAdded.program = "${msg_script} qbit_added '%N'";
         };
       }
     ))
