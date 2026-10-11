@@ -83,7 +83,7 @@ in
           ${tokenEnv} \
           BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
           BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
-          ${cfg.package}/bin/bobert $1 $2
+          ${cfg.package}/bin/bobert $1 '$2'
         '';
       in
       {
