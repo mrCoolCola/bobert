@@ -80,7 +80,6 @@ in
           "BOBERT_TOKEN=${cfg.token}";
         # принимает первым аргументов действие qbit_done/qbit_started, 2-ым аргументом принимает сообщение
         msg_script = pkgs.writeShellScript "msg_script" ''
-          #!/usr/bin/env sh
           ${tokenEnv} \
           BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
           BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
