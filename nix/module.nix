@@ -93,7 +93,7 @@ in
           program = "${msg_script} qbit_done '%N'";
           # case sensitive parameter names
           OnTorrentAdded.Enabled = true;
-          OnTorrentAdded.Program = "${msg_script} qbit_added '%N'";
+          OnTorrentAdded.Program = "${msg_script} qbit_started '%N'";
         };
       }
     ))
