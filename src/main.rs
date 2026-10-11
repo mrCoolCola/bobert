@@ -465,7 +465,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                             &get_nickname(user_id), 
                                             magnet);
                                         torrent::add_magnet(&magnet).await;
-                                        bot.send_message(msg.chat.id, "Ваша ссылка будет загружена.");
                                     }
                                     _ => {
                                         bot.delete_message(msg.chat.id, msg.id).await?;
