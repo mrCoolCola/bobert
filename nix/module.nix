@@ -79,7 +79,7 @@ in
         else
           "BOBERT_TOKEN=${cfg.token}";
         # принимает первым аргументов действие qbit_done/qbit_added, 2-ым аргументом принимает сообщение
-        msg_script = pkgs.writeShellScriptBin "done_script" ''
+        msg_script = pkgs.writeShellScript "done_script" ''
           ${tokenEnv} \
           BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
           BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
