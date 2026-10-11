@@ -89,7 +89,7 @@ in
       {
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
-          program = "done_script %N";
+          program = "${done_script} %N";
           # OnTorrentAdded = {
           #   enabled = true;
           #   program = "${tokenEnv} BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} ${cfg.package}/bin/bobert qbit_started %N";
