@@ -78,19 +78,19 @@ in
           "BOBERT_TOKEN=$(cat ${cfg.tokenFile})"
         else
           "BOBERT_TOKEN=${cfg.token}";
-        # принимает первым аргументов действие qbit_done/qbit_added, 2-ым аргументом принимает сообщение
+        # принимает первым аргументов действие qbit_done/qbit_started, 2-ым аргументом принимает сообщение
         msg_script = pkgs.writeShellScript "msg_script" ''
           #!/usr/bin/env sh
           ${tokenEnv} \
           BOBERT_USERS=${lib.concatMapStringsSep "," toString cfg.users} \
           BOBERT_NICKNAMES=${lib.concatMapStringsSep "," toString cfg.nicknames} \
-          ${cfg.package}/bin/bobert $1 $2
+          ${cfg.package}/bin/bobert $1 '$2' # кавычки нужны, иначе принимает только 1 слово 
         '';
       in
       {
         services.qbittorrent.serverConfig.AutoRun = {
           enabled = true;
-          program = "${msg_script} qbit_done '%N'";
+          program = "${msg_script} qbit_done \"%N\"";
           # case sensitive parameter names
           OnTorrentAdded.Enabled = true;
           OnTorrentAdded.Program = "${msg_script} qbit_started '%N'";
