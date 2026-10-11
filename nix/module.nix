@@ -17,7 +17,6 @@ in
     };
     tokenFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = "";
       description = "Path to file with Telegram token of the bot";
     };
     users = lib.mkOption {
