@@ -1,14 +1,13 @@
 use qbit::{Api, Credentials};
 use qbit::parameters::{AddTorrentType, AddTorrentBuilder};
-// use dotenvy::dotenv;
 use std::env;
 
 pub async fn add_magnet(magnet_url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let user = ""; // если у боберта включен qbittorrentIntegration, аутентификация
-    // для локалхоста выключается
+    // если у боберта включен qbittorrentIntegration, аутентификация для локалхоста выключается
+    let user = "";
     let pass = "";
     let url = "http://127.0.0.1:8080";
-    let credentials = Credentials::new(&user, &pass);
+    let credentials = Credentials::new(user, pass);
     let client = Api::new_login(&url, credentials).await?;
 
     let params = AddTorrentBuilder::default()
