@@ -14,7 +14,8 @@ services.bobert = {
   nicknames = ["наф-наф" "ниф-ниф" "нуф-нуф"] # массив ников, упорядоченных также как и пользователи
 }
 ```
-## Пример установки
+## Установка
+### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS 
 ```nix
 # ./flake.nix
 {
