@@ -16,3 +16,5 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
+    - name: Release
+      uses: softprops/action-gh-release@v3
