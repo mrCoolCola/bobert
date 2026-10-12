@@ -24,41 +24,41 @@ services.bobert = {
 }
 ```
 ## Установка
-### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS .
-```nix
-# ./flake.nix
-{
-  description = "NixOS";
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    bobert = {
-      url = "github:mrCoolCola/bobert";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-  outputs = { 
-    self,
-    nixpkgs,
-    bobert,
-    ...
-  }@inputs: let
-    inherit (self) outputs;
-  in {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [
-          ./modules/nixos
-          bobert.nixosModules.default
-        ];
+  ### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS .
+  ```nix
+  # ./flake.nix
+  {
+    description = "NixOS";
+    inputs = {
+      nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+      bobert = {
+        url = "github:mrCoolCola/bobert";
+        inputs.nixpkgs.follows = "nixpkgs";
       };
     };
-  };
-}
-```
+    outputs = { 
+      self,
+      nixpkgs,
+      bobert,
+      ...
+    }@inputs: let
+      inherit (self) outputs;
+    in {
+      nixosConfigurations = {
+        nixos = nixpkgs.lib.nixosSystem {
+          specialArgs = {inherit inputs outputs;};
+          modules = [
+            ./modules/nixos
+            bobert.nixosModules.default
+          ];
+        };
+      };
+    };
+  }
+  ```
 
-### Другие дистрибутивы
-  В скором времени в <a href="https://github.com/mrCoolCola/bobert/releases/latest">релизах</a> автоматически будут появляться тарболлы с новыми версиями бота
+  ### Другие дистрибутивы
+    В скором времени в <a href="https://github.com/mrCoolCola/bobert/releases/latest">релизах</a> автоматически будут появляться тарболлы с новыми версиями бота
 
 ## Star history
 <a href="https://www.star-history.com/?repos=mrcoolcola%2Fmrcoolcola%2Cmrcoolcola%2Fbobert&type=date&legend=top-left">
