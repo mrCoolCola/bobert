@@ -1,5 +1,9 @@
 name: Rust
-on: push
+on: 
+  push:
+    paths:
+      - src
+      - Cargo.toml
 env:
   CARGO_TERM_COLOR: always
 
