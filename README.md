@@ -16,6 +16,8 @@ services.bobert = {
 ```
 ## Установка
 ### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS 
+### Другие дистрибутивы
+  soon™️
 ```nix
 # ./flake.nix
 {
