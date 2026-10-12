@@ -464,7 +464,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                             user_id, 
                                             &get_nickname(user_id), 
                                             magnet);
-                                        torrent::add_magnet(&magnet).await;
+                                        let _ = torrent::add_magnet(&magnet).await; // silence the warning
                                     }
                                     _ => {
                                         bot.delete_message(msg.chat.id, msg.id).await?;

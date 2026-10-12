@@ -1,6 +1,5 @@
 use qbit::{Api, Credentials};
 use qbit::parameters::{AddTorrentType, AddTorrentBuilder};
-use std::env;
 
 pub async fn add_magnet(magnet_url: &str) -> Result<(), Box<dyn std::error::Error>> {
     // если у боберта включен qbittorrentIntegration, аутентификация для локалхоста выключается
