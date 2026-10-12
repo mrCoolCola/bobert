@@ -17,6 +17,7 @@ jobs:
       run: ls -la
     - name: Release
       uses: softprops/action-gh-release@v3
+      # make an release only on tag
       if: github.ref_type == 'tag'
       with:
         files: target/debug/bobert
