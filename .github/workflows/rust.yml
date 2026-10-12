@@ -6,6 +6,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # release permissison
     steps:
     - name: Checkout
       uses: actions/checkout@v7.0.1
