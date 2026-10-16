@@ -28,7 +28,7 @@ jobs:
         mkdir -p "tarball/usr/bin"
         mkdir -p "tarball/etc/systemd/system"
         cp target/release/bobert "tarball/usr/bin/"
-        touch target/etc/systemd/system/bobert.service
+        touch tarball/etc/systemd/system/bobert.service
         tar -C tarball -czf "bobert.tar.gz"
     - name: Test directory structure
       run: ls -la
