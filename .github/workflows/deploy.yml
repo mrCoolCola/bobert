@@ -1,9 +1,10 @@
 name: Rust
 on: 
-  push
-    # paths:
-      # - src
-      # - Cargo.toml
+  push:
+    paths:
+      - src/**
+      - Cargo.toml
+      - ".github/workflows/rust.yml"
 env:
   CARGO_TERM_COLOR: always
 
@@ -21,8 +22,14 @@ jobs:
     - name: Build for release
       if: github.ref_type == 'tag'
       run: cargo build --verbose --release
-    # - name: Build a tarball
-      # run: need to make a script
+    - name: Package tarball
+      run: |
+        set -euo pipefail
+        mkdir -p "tarball/usr/bin"
+        mkdir -p "tarball/etc/systemd/system"
+        cp target/release/bobert "tarball/usr/bin/"
+        touch target/etc/systemd/system/bobert.service
+        tar -C tarball -czf "bobert.tar.gz"
     - name: Test directory structure
       run: ls -la
     - name: Release
@@ -30,4 +37,6 @@ jobs:
       # make an release only on tag
       if: github.ref_type == 'tag'
       with:
-        files: target/debug/bobert
+        files: |
+          target/debug/bobert
+          bobert.tar.gz
