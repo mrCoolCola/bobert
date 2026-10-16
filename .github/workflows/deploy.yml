@@ -16,13 +16,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v7.0.1
     - name: Build
+      if: github.ref_type != 'tag'
       run: cargo build --verbose
-    - name: Build a tarball
-      run: bash -c 'mkdir tarball \
-        mkdir tarball/etc/systemd/system -p \
-        mkdir tarball/usr/bin -p \
-        cp target/debug/bobert tarball/usr/bin \
-        touch tarball/etc/systemd/system/bobert.service'
+    - name: Build for release
+      if: github.ref_type == 'tag'
+      run: cargo build --verbose --release
+    # - name: Build a tarball
+      # run: need to make a script
     - name: Test directory structure
       run: ls -la
     - name: Release
