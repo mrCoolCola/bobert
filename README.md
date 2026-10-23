@@ -1,3 +1,5 @@
+For English, see [README.en.md](README.en.md)  
+
 # Боберт
 Боберт - это Телеграмм бот для мониторинга Linux сервера.
 Он умеет:
