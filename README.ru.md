@@ -58,7 +58,12 @@ services.bobert = {
 ```
 
 ### Другие дистрибутивы
-  В скором времени в <a href="https://github.com/mrCoolCola/bobert/releases/latest">релизах</a> автоматически будут появляться тарболлы с новыми версиями бота
+  В скором времени в <a href="https://github.com/mrCoolCola/bobert/releases/latest">релизах</a> автоматически будут появляться тарболлы с новыми версиями бота. Для запуска нужно установить переменные окружения:
+  ```
+    BOBERT_TOKEN=<токен>
+    BOBERT_USERS=<id1>,<id2>,<id3>
+    BOBERT_NICKNAMES=<nick1>,<nick2>,<nick3>
+  ```
 
 ## Star history
 <a href="https://www.star-history.com/?repos=mrcoolcola%2Fmrcoolcola%2Cmrcoolcola%2Fbobert&type=date&legend=top-left">
