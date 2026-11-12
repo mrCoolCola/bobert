@@ -15,21 +15,9 @@ For English, see [README.en.md](README.en.md)
   
 Доступ к нему ограничивается по айди.
 
-## Параметры 
-У него есть модуль для nixos - `bobert.nixosModules.default`
-Настройки:
-```nix
-services.bobert = {
-  enable = true;
-  report = true; # ежедневный отчёт о состоянии сервера
-  token = "placeholder"; # токен самого бота
-  tokenFile = "/run/secrets/tokenFile"; # файл содержащий токен
-  users = [1 2 3]; # массив айдишников разрешённых пользователей
-  nicknames = ["наф-наф" "ниф-ниф" "нуф-нуф"] # массив ников, упорядоченных также как и пользователи
-}
-```
 ## Установка
 ### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS .
+#### Flake
 ```nix
 # ./flake.nix
 {
@@ -59,6 +47,19 @@ services.bobert = {
       };
     };
   };
+}
+```
+## Конфигурация
+У него есть модуль для nixos - `bobert.nixosModules.default`
+Настройки:
+```nix
+services.bobert = {
+  enable = true;
+  report = true; # ежедневный отчёт о состоянии сервера
+  token = "placeholder"; # токен самого бота
+  tokenFile = "/run/secrets/tokenFile"; # файл содержащий токен
+  users = [1 2 3]; # массив айдишников разрешённых пользователей
+  nicknames = ["наф-наф" "ниф-ниф" "нуф-нуф"] # массив ников, упорядоченных также как и пользователи
 }
 ```
 
