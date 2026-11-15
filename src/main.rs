@@ -1,9 +1,8 @@
 use teloxide::prelude::*;
 use teloxide::types::KeyboardButton;
 use teloxide::types::ReplyMarkup;
-use std::process::Command;
 use reqwest::Proxy;
-use std::env;
+use std::{env, process::Command};
 use std::sync::OnceLock;
 mod torrent;
 
@@ -218,32 +217,7 @@ fn get_temperatures() -> String {
         .unwrap_or_else(|_| {
             "Не удалось получить данные о температуре.".to_string()
         });
-    
-    if temp_output.contains("°C") || temp_output.contains("°F") {
-        format!("⫍ Температуры ⫎═════\n{}", temp_output)
-    } else {
-        // Альтернативный способ через thermal zones
-        let thermal_zones = std::fs::read_dir("/sys/class/thermal/")
-            .map(|entries| {
-                let mut temps = Vec::new();
-                for entry in entries.flatten() {
-                    let zone_name = entry.file_name().to_string_lossy().to_string();
-                    if zone_name.starts_with("thermal_zone") {
-                        let temp_path = format!("/sys/class/thermal/{}/temp", zone_name);
-                        if let Ok(content) = std::fs::read_to_string(&temp_path) {
-                            if let Ok(temp_c) = content.trim().parse::<f32>() {
-                                let temp_c = temp_c / 1000.0;
-                                temps.push(format!("{}: {:.1}°C", zone_name, temp_c));
-                            }
-                        }
-                    }
-                }
-                temps.join("\n")
-            })
-            .unwrap_or_else(|_| "Не удалось прочитать thermal zones".to_string());
-        
-        format!("⫍ Температуры ⫎═════\n{}", thermal_zones)
-    }
+    format!("⫍ Температуры ⫎═════\n{}", temp_output)
 }
 
 // Функция для получения информации о сети
@@ -359,7 +333,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
     // получение тг токена из переменной окружения
     let token = env::var("BOBERT_TOKEN")
-        .expect("BOBERT_TOKEN must be set in .env or shell to run the bot.");
+        .expect("BOBERT_TOKEN must be set in environment to run the bot.");
     let bot = teloxide::Bot::with_client(token, client);
     let command = std::env::args().nth(1).expect("no command given");
 
@@ -407,31 +381,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 .reply_markup(get_keyboard())
                                 .await?;
                         }
-                        "🔌 Статус питания" => {
-                            bot.send_message(msg.chat.id, get_power_status())
-                                // .reply_markup(get_keyboard())
-                                .await?;
-                        }
-                        "🎮 Статус сервера" => {
-                            bot.send_message(msg.chat.id, get_server_status())
-                                // .reply_markup(get_keyboard())
-                                .await?;
-                        }
-                        "🎛 Сервисы" => {
-                            bot.send_message(msg.chat.id, get_services_status())
-                                // .reply_markup(get_keyboard())
-                                .await?;
-                        }
-                        "🔥 Температуры" => {
-                            bot.send_message(msg.chat.id, get_temperatures())
-                                // .reply_markup(get_keyboard())
-                                .await?;
-                        }
-                        "🌐 Сеть" => {
-                            bot.send_message(msg.chat.id, get_network_status())
-                                // .reply_markup(get_keyboard())
-                                .await?;
-                        }
+                        "🔌 Статус питания" => { bot.send_message(msg.chat.id, get_power_status()).await?; }
+                        "🎮 Статус сервера" => { bot.send_message(msg.chat.id, get_server_status()).await?; }
+                        "🎛 Сервисы" => { bot.send_message(msg.chat.id, get_services_status()).await?; }
+                        "🔥 Температуры" => { bot.send_message(msg.chat.id, get_temperatures()).await?; }
+                        "🌐 Сеть" => { bot.send_message(msg.chat.id, get_network_status()).await?; }
                         _ => {
                             // commands with multiple parts
                             let parts: Vec<&str> = text.split_whitespace().collect();
@@ -440,23 +394,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     "/run" => {
                                         let service = parts[1];
                                         let result = manage_service("run", service);
-                                        bot.send_message(msg.chat.id, result)
-                                            // .reply_markup(get_keyboard())
-                                            .await?;
+                                        bot.send_message(msg.chat.id, result).await?;
                                     }
                                     "/stop" => {
                                         let service = parts[1];
                                         let result = manage_service("stop", service);
-                                        bot.send_message(msg.chat.id, result)
-                                            // .reply_markup(get_keyboard())
-                                            .await?;
+                                        bot.send_message(msg.chat.id, result).await?;
                                     }
                                     "/restart" => {
                                         let service = parts[1];
                                         let result = manage_service("restart", service);
-                                        bot.send_message(msg.chat.id, result)
-                                            // .reply_markup(get_keyboard())
-                                            .await?;
+                                        bot.send_message(msg.chat.id, result).await?;
                                     }
                                     "/magnet" => {
                                         let magnet = parts[1];
@@ -467,12 +415,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         let _ = torrent::add_magnet(&magnet).await; // silence the warning
                                     }
                                     _ => {
+                                        println!("_");
                                         bot.delete_message(msg.chat.id, msg.id).await?;
-                                        let escaped = teloxide::utils::markdown::escape(text);
-                                        inform(&bot, user_id, escaped.to_string()).await;
+                                        inform(&bot, user_id, teloxide::utils::markdown::escape(text)).await;
                                     } // всё что не комманда то глобальное сообщение
                                 }
                             } else {
+                                println!("else");
                                 bot.delete_message(msg.chat.id, msg.id).await?;
                                 inform(&bot, user_id, teloxide::utils::markdown::escape(text)).await;                
                             }

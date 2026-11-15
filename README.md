@@ -16,7 +16,7 @@ For English, see [README.en.md](README.en.md)
 Доступ к нему ограничивается по айди.
 
 ## Установка
-### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS .
+### <img alt="Logo" src="https://github.com/mrCoolCola/mrCoolCola/raw/main/assets/nixos-original.svg" style="height:1em;width:1em;"> NixOS
 #### Flake
 ```nix
 # ./flake.nix
