@@ -9,4 +9,5 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl openssl.dev ];
+  AWS_LC_SYS_USE_SYSTEM = "0";
 }
