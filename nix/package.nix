@@ -1,4 +1,4 @@
-{ lib, rustPlatform, pkg-config, openssl, ... }:
+{ lib, rustPlatform, pkg-config, openssl, cmake, perl, ... }:
 
 rustPlatform.buildRustPackage {
   pname = "bobert";
@@ -7,7 +7,8 @@ rustPlatform.buildRustPackage {
 
   cargoLock.lockFile = ../Cargo.lock;
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ pkg-config cmake perl];
   buildInputs = [ openssl openssl.dev ];
   AWS_LC_SYS_USE_SYSTEM = "0";
+  AWS_LC_SYS_CMAKE_BUILDER = "1";
 }
