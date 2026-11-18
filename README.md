@@ -50,7 +50,7 @@ For English, see [README.en.md](README.en.md)
   };
 }
 ```
-## Конфигурация
+#### Конфигурация
 У него есть модуль для nixos - `bobert.nixosModules.default`
 Настройки:
 ```nix
