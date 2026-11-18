@@ -23,6 +23,7 @@ jobs:
       if: github.ref_type == 'tag'
       run: cargo build --verbose --release
     - name: Package tarball
+      if: github.ref_type == 'tag'
       run: |
         set -euo pipefail
         mkdir -p "tarball/usr/bin"
