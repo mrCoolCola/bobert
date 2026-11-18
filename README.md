@@ -1,6 +1,7 @@
 For English, see [README.en.md](README.en.md)  
 
 [![gh_repo](https://img.shields.io/badge/github-repo-0FBF3E?logo=github)](https://github.com/mrCoolCola/bobert)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mrCoolCola/bobert/deploy.yml)
 [![cb_repo](https://img.shields.io/badge/codeberg-repo-2185D0?logo=codeberg)](https://codeberg.org/mrCoolCola/bobert)
 ![tested_on](https://img.shields.io/badge/tested_on-26.11-4D6FB7?logo=nixos)
 # Боберт
