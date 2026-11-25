@@ -9,6 +9,7 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [ pkg-config cmake perl];
   buildInputs = [ openssl openssl.dev ];
+  # stoopid aws-lc-sys compilation fixes
   dontCargoUseSystemLibs = true;
   AWS_LC_SYS_USE_SYSTEM = "0";
   AWS_LC_SYS_CMAKE_BUILDER = "1";

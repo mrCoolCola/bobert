@@ -96,7 +96,8 @@ in
             OnTorrentAdded.Enabled = true;
             OnTorrentAdded.Program = "${msg_script} qbit_started '%N'";
           };
-          Preferences.WebUI.LocalHostAuth = false; # для того, чтоб боберт мог добавлять магнитки
+          # я забыл что пользуюсь reverse proxy
+          # Preferences.WebUI.LocalHostAuth = false; # для того, чтоб боберт мог добавлять магнитки
         };
       }
     ))
